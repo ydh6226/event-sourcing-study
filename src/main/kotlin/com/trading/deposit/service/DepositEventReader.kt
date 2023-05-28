@@ -21,6 +21,11 @@ class DepositReader(
 ) {
     private val logger = KotlinLogging.logger {}
 
+    // TODO: 유니크 제약조건 어떻게 걸지??
+    fun isNotExists(accountNo: String): Boolean {
+        return findEventEntities(accountNo).isEmpty()
+    }
+
     fun getDeposit(accountNo: String): Deposit {
         var eventEntities = findEventEntities(accountNo)
         require(eventEntities.isNotEmpty()) { "${accountNo} 계좌의 잔고가 없습니다." }
@@ -41,7 +46,7 @@ class DepositReader(
 
     // TODO: reflection
     private fun apply(eventEntity: DepositEventEntity): Deposit {
-        logger.info { "[deposit reply] ${eventEntity}}" }
+        logger.info { "[deposit reply] accountNo: ${eventEntity.accountNo}, type: ${eventEntity.eventType}, payload: ${eventEntity.payload}" }
 
         return when (eventEntity.eventType) {
             DepositEventType.DepositCreated -> Deposit.from(DepositCreatedEvent.from(eventEntity))
