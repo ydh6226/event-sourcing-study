@@ -28,7 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.springframework.cloud:spring-cloud-starter-sleuth:3.1.7")
+//    implementation("org.springframework.cloud:spring-cloud-starter-sleuth:3.1.7")
     implementation("org.apache.commons:commons-lang3:3.0")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("com.fasterxml.uuid:java-uuid-generator:3.1.5")

@@ -4,27 +4,27 @@ import com.trading.common.JsonUtils
 import com.trading.deposit.domain.DepositEventEntity
 import java.math.BigDecimal
 
-class DepositCreatedEvent(
-    val balance: BigDecimal,
+class DepositIncreasedEvent(
+    val amount: BigDecimal,
     accountNo: String,
     eventId: String = EventIdGenerator.generate(),
 ) : DepositEvent(accountNo, TYPE, eventId) {
 
     init {
-        require(balance >= BigDecimal.ZERO) { "초기 잔고는 0이상이어야 합니다. 요청금액: ${balance}" }
+        require(amount >= BigDecimal.ZERO) { "입금 금액은 0이상이어야 합니다. 요청금액: ${amount}" }
     }
 
     companion object {
-        val TYPE = DepositEventType.DEPOSIT_CREATED
+        val TYPE = DepositEventType.DEPOSIT_INCREASED
 
-        fun from(eventEntity: DepositEventEntity): DepositCreatedEvent {
+        fun from(eventEntity: DepositEventEntity): DepositIncreasedEvent {
             check(eventEntity.eventType == TYPE)
 
-            val event = JsonUtils.readValue(eventEntity.payload, DepositCreatedEvent::class.java)
+            val event = JsonUtils.readValue(eventEntity.payload, DepositIncreasedEvent::class.java)
 
-            return DepositCreatedEvent(
+            return DepositIncreasedEvent(
                 accountNo = event.accountNo,
-                balance = event.balance,
+                amount = event.amount,
                 eventId = eventEntity.eventId,
             )
         }

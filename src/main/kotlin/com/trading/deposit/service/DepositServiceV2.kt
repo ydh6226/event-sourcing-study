@@ -1,6 +1,8 @@
 package com.trading.deposit.service
 
 import com.trading.deposit.event.DepositCreatedEvent
+import com.trading.deposit.event.DepositDecreasedEvent
+import com.trading.deposit.event.DepositIncreasedEvent
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,13 +19,22 @@ class DepositServiceV2(
 
     fun create(accountNo: String, balance: BigDecimal) {
         logger.info { "잔고생성: accountNo: ${accountNo}, balance: ${balance}" }
-        checkNotExists(accountNo)
 
-        val event = DepositCreatedEvent(accountNo, balance)
+        val event = DepositCreatedEvent(balance, accountNo)
         depositEventHandler.on(event)
     }
 
-    private fun checkNotExists(accountNo: String) {
-        require(depositReader.isNotExists(accountNo)){ "${accountNo} 계좌의 잔고가 이미 존재합니다" }
+    fun increase(accountNo: String, amount: BigDecimal) {
+        logger.info { "입금 요청: accountNo: ${accountNo}, amount: ${amount}" }
+
+        val event = DepositIncreasedEvent(amount, accountNo)
+        depositEventHandler.on(event)
+    }
+
+    fun decrease(accountNo: String, amount: BigDecimal) {
+        logger.info { "출금 요청: accountNo: ${accountNo}, amount: ${amount}" }
+
+        val event = DepositDecreasedEvent(amount, accountNo)
+        depositEventHandler.on(event)
     }
 }

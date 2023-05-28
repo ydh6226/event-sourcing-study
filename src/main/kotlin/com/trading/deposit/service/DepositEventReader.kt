@@ -4,7 +4,9 @@ import com.trading.config.EventConfig
 import com.trading.deposit.domain.Deposit
 import com.trading.deposit.domain.DepositEventEntity
 import com.trading.deposit.event.DepositCreatedEvent
+import com.trading.deposit.event.DepositDecreasedEvent
 import com.trading.deposit.event.DepositEventType
+import com.trading.deposit.event.DepositIncreasedEvent
 import com.trading.deposit.repository.DepositEventRepository
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
@@ -30,12 +32,13 @@ class DepositReader(
         var eventEntities = findEventEntities(accountNo)
         require(eventEntities.isNotEmpty()) { "${accountNo} 계좌의 잔고가 없습니다." }
 
-        var deposit: Deposit? = null
-
         while (true) {
-            eventEntities.forEach { deposit = apply(it) }
+            var deposit: Deposit? = null
+
+            eventEntities.forEach { deposit = apply(deposit, it) }
 
             if (eventEntities.size < eventConfig.readEventChunkSize) {
+                logger.info { "deposit: ${deposit}" }
                 return deposit!!
             } else {
                 val lastEventEntityId = eventEntities.last().id
@@ -45,11 +48,18 @@ class DepositReader(
     }
 
     // TODO: reflection
-    private fun apply(eventEntity: DepositEventEntity): Deposit {
-        logger.info { "[deposit reply] accountNo: ${eventEntity.accountNo}, type: ${eventEntity.eventType}, payload: ${eventEntity.payload}" }
+    private fun apply(deposit: Deposit?, eventEntity: DepositEventEntity): Deposit {
+        val eventType = eventEntity.eventType
+        logger.info { "[deposit reply] accountNo: ${eventEntity.accountNo}, type: $eventType, payload: ${eventEntity.payload}" }
 
-        return when (eventEntity.eventType) {
-            DepositEventType.DepositCreated -> Deposit.from(DepositCreatedEvent.from(eventEntity))
+        if (eventType != DepositEventType.DEPOSIT_CREATED) {
+            checkNotNull(deposit) { "type: $eventType" }
+        }
+
+        return when (eventType) {
+            DepositEventType.DEPOSIT_CREATED -> Deposit.from(DepositCreatedEvent.from(eventEntity))
+            DepositEventType.DEPOSIT_INCREASED -> deposit!!.on(DepositIncreasedEvent.from(eventEntity))
+            DepositEventType.DEPOSIT_DECREASED -> deposit!!.on(DepositDecreasedEvent.from(eventEntity))
         }
     }
 

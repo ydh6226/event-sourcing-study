@@ -1,5 +1,8 @@
 package com.trading.deposit.event
 
 enum class DepositEventType {
-    DepositCreated,
+    DEPOSIT_CREATED,
+    DEPOSIT_INCREASED,
+    DEPOSIT_DECREASED,
+    ;
 }
