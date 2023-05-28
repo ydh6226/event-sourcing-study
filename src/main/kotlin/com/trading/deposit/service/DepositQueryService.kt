@@ -1,6 +1,6 @@
 package com.trading.deposit.service
 
-import com.trading.deposit.domain.Deposit
+import com.trading.deposit.entity.DepositEntity
 import com.trading.deposit.repository.DepositRepository
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ class DepositQueryService(
         return deposit.balance
     }
 
-    private fun getDeposit(accountNo: String): Deposit {
+    private fun getDeposit(accountNo: String): DepositEntity {
         return depositRepository.findByAccountNo(accountNo) ?: throw IllegalArgumentException("${accountNo} 계좌의 잔고가 없습니다.")
     }
 }
