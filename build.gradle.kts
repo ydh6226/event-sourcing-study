@@ -31,6 +31,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:3.1.7")
     implementation("org.apache.commons:commons-lang3:3.0")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+    implementation("com.fasterxml.uuid:java-uuid-generator:3.1.5")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

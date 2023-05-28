@@ -17,3 +17,7 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
+
+app:
+  event:
+    read-event-chunk-size: 1000
