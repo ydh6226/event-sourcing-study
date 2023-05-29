@@ -12,7 +12,6 @@ import java.math.BigDecimal
 @Service
 class DepositServiceV2(
     private val depositEventHandler: DepositEventHandler,
-    private val depositReader: DepositReader,
 ) {
 
     private val logger = KotlinLogging.logger {}

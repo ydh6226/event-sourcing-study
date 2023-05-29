@@ -10,4 +10,8 @@ object JsonUtils {
         return mapper.readValue(payload, clazz)
     }
 
+    fun writeValueAsString(payload: Any): String {
+        return mapper.writeValueAsString(payload)
+    }
+
 }

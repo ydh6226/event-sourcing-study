@@ -5,6 +5,7 @@ import java.time.Instant
 
 object EventIdGenerator {
 
+    // TODO: 시간순으로 증가하게 만드는 다른방법?
     fun generate(): String {
 //        val uuid = Generators.timeBasedGenerator().generate()!!
 //        return uuid.toString()

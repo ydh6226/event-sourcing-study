@@ -12,11 +12,22 @@ class DepositEventRepository(
     private val depositEventJpaRepository: DepositEventJpaRepository,
 ) : DepositEventJpaRepository by depositEventJpaRepository {
 
-    fun findAllByEventIdAsc(accountNo: String, eventId: String?, limit: Long): List<DepositEventEntity> {
+    // gtEventId < eventId <= loeEventId
+    fun findAllOrderByEventIdAsc(
+        accountNo: String,
+        gtEventId: String? = null,
+        loeEventId: String? = null,
+        limit: Long,
+    ): List<DepositEventEntity> {
+        if (gtEventId != null && loeEventId != null) {
+            check(gtEventId <= loeEventId) { "gtEventId[${gtEventId}] <= loeEventId${loeEventId} 를 만족해야합니다." }
+        }
+
         return query.selectFrom(depositEventEntity)
             .where(
                 eqAccountNo(accountNo),
-                eqEventId(eventId)
+                gtEventId(gtEventId),
+                loeEventId(loeEventId)
             )
             .orderBy(depositEventEntity.eventId.asc())
             .limit(limit)
@@ -27,7 +38,11 @@ class DepositEventRepository(
         return depositEventEntity.accountNo.eq(accountNo)
     }
 
-    private fun eqEventId(eventId: String?): BooleanExpression? {
-        return eventId?.let { depositEventEntity.eventId.gt(it) }
+    private fun gtEventId(gtEventId: String?): BooleanExpression? {
+        return gtEventId?.let { depositEventEntity.eventId.gt(it) }
+    }
+
+    private fun loeEventId(loeEventId: String?): BooleanExpression? {
+        return loeEventId?.let { depositEventEntity.eventId.loe(it) }
     }
 }

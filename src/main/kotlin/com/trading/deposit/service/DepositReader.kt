@@ -25,8 +25,8 @@ class DepositReader(
         return findEventEntities(accountNo).isEmpty()
     }
 
-    fun getDeposit(accountNo: String): Deposit {
-        var eventEntities = findEventEntities(accountNo)
+    fun getDeposit(accountNo: String, loeEventId: String? = null): Deposit {
+        var eventEntities = findEventEntities(accountNo = accountNo, loeEventId = loeEventId)
         require(eventEntities.isNotEmpty()) { "${accountNo} 계좌의 잔고가 없습니다." }
 
         while (true) {
@@ -39,7 +39,7 @@ class DepositReader(
                 return deposit!!
             } else {
                 val lastEventEntityId = eventEntities.last().eventId
-                eventEntities = findEventEntities(accountNo, lastEventEntityId)
+                eventEntities = findEventEntities(accountNo, lastEventEntityId, loeEventId)
             }
         }
     }
@@ -60,7 +60,11 @@ class DepositReader(
         }
     }
 
-    private fun findEventEntities(accountNo: String, lastEventId: String? = null): List<DepositEventEntity> {
-        return eventRepository.findAllByEventIdAsc(accountNo, lastEventId, eventConfig.readEventChunkSize)
+    private fun findEventEntities(
+        accountNo: String,
+        gtEventId: String? = null,
+        loeEventId: String? = null,
+    ): List<DepositEventEntity> {
+        return eventRepository.findAllOrderByEventIdAsc(accountNo, gtEventId, loeEventId, eventConfig.readEventChunkSize)
     }
 }

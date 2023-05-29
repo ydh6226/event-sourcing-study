@@ -21,3 +21,4 @@ spring:
 app:
   event:
     read-event-chunk-size: 1000
+    snapshot-count: 3
