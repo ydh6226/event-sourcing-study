@@ -4,9 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.trading.deposit.domain.DepositEventEntity
 import com.trading.deposit.domain.QDepositEventEntity.depositEventEntity
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 
-@Component
+@Repository
 class DepositEventRepository(
     private val query: JPAQueryFactory,
     private val depositEventJpaRepository: DepositEventJpaRepository,

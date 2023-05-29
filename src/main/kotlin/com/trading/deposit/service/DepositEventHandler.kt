@@ -4,6 +4,7 @@ import com.trading.deposit.domain.Deposit
 import com.trading.deposit.event.DepositCreatedEvent
 import com.trading.deposit.event.DepositDecreasedEvent
 import com.trading.deposit.event.DepositIncreasedEvent
+import mu.KotlinLogging
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -14,6 +15,8 @@ class DepositEventHandler(
     private val depositReader: DepositReader,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
+
+    private val logger = KotlinLogging.logger {}
 
     fun on(event: DepositCreatedEvent): Deposit {
         val deposit = Deposit.from(event)
@@ -29,15 +32,17 @@ class DepositEventHandler(
 
     fun on(event: DepositIncreasedEvent) {
         val deposit = depositReader.getDeposit(event.accountNo)
-        deposit.on(event)
+        val newDeposit = deposit.on(event)
 
+        logger.info { "입금 완료. ${newDeposit}}" }
         eventPublisher.publishEvent(event)
     }
 
     fun on(event: DepositDecreasedEvent) {
         val deposit = depositReader.getDeposit(event.accountNo)
-        deposit.on(event)
+        val newDeposit = deposit.on(event)
 
+        logger.info { "출금 완료. ${newDeposit}}" }
         eventPublisher.publishEvent(event)
     }
 }

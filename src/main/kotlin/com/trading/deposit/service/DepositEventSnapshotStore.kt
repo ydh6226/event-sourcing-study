@@ -26,7 +26,7 @@ class DepositEventSnapshotStore(
     fun store(event: DepositEvent) {
         val accountNo = event.accountNo
 
-        val lastSnapshot = snapshotRepository.findByAccountNoOrderByEventIdDesc(accountNo)
+        val lastSnapshot = snapshotRepository.findOrderByEventIdDesc(accountNo)
         val events = findEventEntities(accountNo, lastSnapshot?.eventId)
 
         if (events.size < eventConfig.snapshotCount) {
@@ -39,10 +39,12 @@ class DepositEventSnapshotStore(
 
     fun findEventEntities(
         accountNo: String,
+        gtEventId: String? = null,
         loeEventId: String? = null,
     ): List<DepositEventEntity> {
         return eventRepository.findAllOrderByEventIdAsc(
             accountNo = accountNo,
+            gtEventId = gtEventId,
             loeEventId = loeEventId,
             limit = eventConfig.readEventChunkSize
         )
@@ -54,12 +56,12 @@ class DepositEventSnapshotStore(
         lastEventId: String,
     ) {
         val deposit = depositEventReader.getDeposit(accountNo, lastEventId)
+
         val payload = JsonUtils.writeValueAsString(deposit)
-
         val snapshot = DepositEventSnapshot(lastEventId, accountNo, payload)
-        snapshotRepository.save(snapshot)
 
-        logger.info { "스냅샷 저장 완료. ${JsonUtils.writeValueAsString(snapshot)}" }
+        snapshotRepository.save(snapshot)
+        logger.info { "[deposit snapshot saved] ${deposit}, eventId: ${lastEventId}" }
     }
 
 }

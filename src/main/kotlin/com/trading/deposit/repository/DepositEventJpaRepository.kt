@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface DepositEventJpaRepository : JpaRepository<DepositEventEntity, Long> {
+
+    fun existsByAccountNo(accountNo: String): Boolean
 }
