@@ -9,9 +9,6 @@ import com.trading.deposit.event.DepositEventType
 import com.trading.deposit.event.DepositIncreasedEvent
 import com.trading.deposit.repository.DepositEventRepository
 import mu.KotlinLogging
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -41,7 +38,7 @@ class DepositReader(
                 logger.info { "deposit: ${deposit}" }
                 return deposit!!
             } else {
-                val lastEventEntityId = eventEntities.last().id
+                val lastEventEntityId = eventEntities.last().eventId
                 eventEntities = findEventEntities(accountNo, lastEventEntityId)
             }
         }
@@ -63,12 +60,7 @@ class DepositReader(
         }
     }
 
-    private fun findEventEntities(accountNo: String, lastId: Long = 0): List<DepositEventEntity> {
-        return eventRepository.findAllByAccountNoAndIdGreaterThan(accountNo, lastId, getPageable())
-    }
-
-    private fun getPageable(): Pageable {
-        val sort = Sort.by(Sort.Direction.ASC, "id")
-        return PageRequest.of(0, eventConfig.readEventChunkSize, sort)
+    private fun findEventEntities(accountNo: String, lastEventId: String? = null): List<DepositEventEntity> {
+        return eventRepository.findAllByEventIdAsc(accountNo, lastEventId, eventConfig.readEventChunkSize)
     }
 }

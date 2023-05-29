@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
+    kotlin("kapt") version "1.7.10"
 }
 
 allOpen {
@@ -30,6 +31,11 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 //    implementation("org.springframework.cloud:spring-cloud-starter-sleuth:3.1.7")
     implementation("org.apache.commons:commons-lang3:3.0")
+
+    implementation("com.querydsl:querydsl-jpa:5.0.0")
+    kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
+
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("com.fasterxml.uuid:java-uuid-generator:3.1.5")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

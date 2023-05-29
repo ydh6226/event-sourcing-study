@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct
 @ConfigurationProperties(prefix = "app.event")
 @ConstructorBinding
 data class EventConfig(
-    val readEventChunkSize: Int
+    val readEventChunkSize: Long
 ) {
 
     private val logger = KotlinLogging.logger {}
